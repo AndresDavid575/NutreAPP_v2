@@ -52,6 +52,29 @@ public class VideoServicio {
         return this.repositorio.findAll();
     }
 
+     public Video modificar(UUID id, Video datos){
+
+
+        Optional<Video> videoBuscado =this.repositorio.findById(id);
+        if(! videoBuscado.isPresent()){
+            throw new ResponseStatusException(HttpStatus.BAD_REQUEST,"id no encontrado");
+
+        }else{
+            //RECARGAR LA INFO QUE EXISTE ACTUALMENTE EN BD
+            Video videoEncontrado=videoBuscado.get();
+
+
+            // Espacio para modificar solo las propiedades permitidas
+            videoEncontrado.setTitulo(datos.getTitulo());
+            videoEncontrado.setCategoria(datos.getCategoria());
+           
+            //Espacio para volver a guardar el usuario que se acaba de modificar
+
+          return   this.repositorio.save(videoEncontrado);
+        }
+        
+}
+
     
 
 
