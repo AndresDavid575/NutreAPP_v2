@@ -13,72 +13,75 @@ import com.example.NutreAPP.models.Usuario;
 import com.example.NutreAPP.models.Video;
 import com.example.NutreAPP.repositories.IVideoRepositorio;
 
-@Service 
+@Service
 public class VideoServicio {
-    //metodo para buscar por id
+    // metodo para buscar por id
 
-    //metodo para buscar todos
+    // metodo para buscar todos
 
-    //metodo para buscar para modificar
+    // metodo para buscar para modificar
 
-    //metodo para eliminar
+    // metodo para eliminar
 
     // metodo para buscar por titulo
 
     // metodo para buscar por descripcion
 
     // metodo para buscar por url
-    @Autowired 
+    @Autowired
     private IVideoRepositorio repositorio;
 
-    public Video guardar(Video datos){
-       return  this.repositorio.save(datos);
+    public Video guardar(Video datos) {
+        return this.repositorio.save(datos);
     }
 
-    //Metodo para buscar por ID
-      public Video buscarPorId(UUID id){
-        Optional<Video> videoBuscado =this.repositorio.findById(id);
-        if(! videoBuscado.isPresent()){
-            throw new ResponseStatusException(HttpStatus.BAD_REQUEST,"id no encontrado");
+    // Metodo para buscar por ID
+    public Video buscarPorId(UUID id) {
+        Optional<Video> videoBuscado = this.repositorio.findById(id);
+        if (!videoBuscado.isPresent()) {
+            throw new ResponseStatusException(HttpStatus.BAD_REQUEST, "id no encontrado");
 
-        }else{
+        } else {
             return videoBuscado.get();
         }
     }
 
-    //Metodo para buscar todos
+    // Metodo para buscar todos
 
-    public List<Video> buscarTodos(){
+    public List<Video> buscarTodos() {
         return this.repositorio.findAll();
     }
 
-     public Video modificar(UUID id, Video datos){
+    public Video modificar(UUID id, Video datos) {
 
+        Optional<Video> videoBuscado = this.repositorio.findById(id);
+        if (!videoBuscado.isPresent()) {
+            throw new ResponseStatusException(HttpStatus.BAD_REQUEST, "id no encontrado");
 
-        Optional<Video> videoBuscado =this.repositorio.findById(id);
-        if(! videoBuscado.isPresent()){
-            throw new ResponseStatusException(HttpStatus.BAD_REQUEST,"id no encontrado");
-
-        }else{
-            //RECARGAR LA INFO QUE EXISTE ACTUALMENTE EN BD
-            Video videoEncontrado=videoBuscado.get();
-
+        } else {
+            // RECARGAR LA INFO QUE EXISTE ACTUALMENTE EN BD
+            Video videoEncontrado = videoBuscado.get();
 
             // Espacio para modificar solo las propiedades permitidas
             videoEncontrado.setTitulo(datos.getTitulo());
             videoEncontrado.setCategoria(datos.getCategoria());
-           
-            //Espacio para volver a guardar el usuario que se acaba de modificar
 
-          return   this.repositorio.save(videoEncontrado);
+            // Espacio para volver a guardar el usuario que se acaba de modificar
+
+            return this.repositorio.save(videoEncontrado);
         }
-        
-}
 
-    
+    }
 
-
-
-
+    // metodo para eliminar
+    public boolean eliminar(UUID id) {
+        Optional<Video> videoBuscado = this.repositorio.findById(id);
+        if (!videoBuscado.isPresent()) {
+            throw new ResponseStatusException(HttpStatus.BAD_REQUEST, "id no encontrado");
+        } else {
+            this.repositorio.deleteById(id);
+            return true;
+        }
+    }
 
 }
