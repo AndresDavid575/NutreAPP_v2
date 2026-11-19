@@ -12,6 +12,7 @@ import org.springframework.web.server.ResponseStatusException;
 import com.example.NutreAPP.models.Usuario;
 import com.example.NutreAPP.models.Video;
 import com.example.NutreAPP.repositories.IVideoRepositorio;
+import com.example.NutreAPP.validations.UsuarioValidacion;
 
 @Service
 public class VideoServicio {
@@ -31,7 +32,17 @@ public class VideoServicio {
     @Autowired
     private IVideoRepositorio repositorio;
 
-    public Video guardar(Video datos) {
+        @Autowired
+    private UsuarioValidacion validador;
+
+        public Video guardar(Video datos) {
+        // Validaciones antes de guardar
+        this.validador.validarTituloVideo(datos.getTitulo());
+        this.validador.validarUrlVideo(datos.getUrl());
+       this.validador.validarCategoriaVideo(datos.getCategoria().name());
+        this.validador.validarDescripcionVideo(datos.getDescripcion());
+        this.validador.validarUrlUnica(datos.getUrl());
+        
         return this.repositorio.save(datos);
     }
 

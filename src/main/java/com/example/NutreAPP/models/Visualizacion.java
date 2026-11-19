@@ -77,6 +77,20 @@ public class Visualizacion {
     public void setCompletado(Boolean completado) {
         this.completado = completado;
     }
-    
+        public Usuario getUsuario() {
+        return usuario;
+    }
+
+    public void setUsuario(Usuario usuario) {
+        this.usuario = usuario;
+    }
+
+    public Video getVideo() {
+        return video;
+    }
+
+    public void setVideo(Video video) {
+        this.video = video;
+    }
 
 }

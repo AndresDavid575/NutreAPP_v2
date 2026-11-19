@@ -14,54 +14,60 @@ import com.example.NutreAPP.models.Visualizacion;
 import com.example.NutreAPP.repositories.IUsuarioRepositorio;
 import com.example.NutreAPP.repositories.IVideoRepositorio;
 import com.example.NutreAPP.repositories.IVisualizacionRepositorio;
+import com.example.NutreAPP.validations.UsuarioValidacion;
 
-@Service 
+@Service
 public class VisualizacionServicio {
-    //metodo para buscar por id
+    // metodo para buscar por id
 
-    //metodo para buscar todos
+    // metodo para buscar todos
 
-    //metodo para buscar para modificar
+    // metodo para buscar para modificar
 
-    //metodo para eliminar
+    // metodo para eliminar
 
-    //metodo para buscar por fecha_visualizacion
+    // metodo para buscar por fecha_visualizacion
 
-    //metodo para buscar por completado
+    // metodo para buscar por completado
 
-    @Autowired 
+    @Autowired
     private IVisualizacionRepositorio repositorio;
 
-    @Autowired 
+    @Autowired
     private IUsuarioRepositorio usuarioRepositorio;
-    @Autowired 
+
+    @Autowired
     private IVideoRepositorio videoRepositorio;
 
-    public Visualizacion guardar(Visualizacion datos){
-       return   this.repositorio.save(datos);
+    @Autowired
+    private UsuarioValidacion validador;
 
+    public Visualizacion guardar(Visualizacion datos) {
+        // Validaciones antes de guardar
+        
+        this.validador.validarFechaVisualizacion(datos.getFecha_visualizacion());
+        this.validador.validarFechaNoFutura(datos.getFecha_visualizacion());
+        this.validador.validarCompletado(datos.getCompletado());
+        this.validador.validarExistenciaUsuarioYVideo(datos.getUsuario().getId(), datos.getVideo().getId());
+
+        return this.repositorio.save(datos);
     }
 
-    
-    //Metodo para buscar por ID
-      public Visualizacion buscarPorId(UUID id){
-        Optional<Visualizacion> visualizacionBuscado =this.repositorio.findById(id);
-        if(! visualizacionBuscado.isPresent()){
-            throw new ResponseStatusException(HttpStatus.BAD_REQUEST,"id no encontrado");
+    // Metodo para buscar por ID
+    public Visualizacion buscarPorId(UUID id) {
+        Optional<Visualizacion> visualizacionBuscado = this.repositorio.findById(id);
+        if (!visualizacionBuscado.isPresent()) {
+            throw new ResponseStatusException(HttpStatus.BAD_REQUEST, "id no encontrado");
 
-        }else{
+        } else {
             return visualizacionBuscado.get();
         }
     }
 
-    //Metodo para buscar todos
+    // Metodo para buscar todos
 
-    public List<Visualizacion> buscarTodos(){
+    public List<Visualizacion> buscarTodos() {
         return this.repositorio.findAll();
     }
-
-    
-    
-
 
 }

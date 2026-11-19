@@ -1,5 +1,7 @@
 package com.example.NutreAPP.validations;
 
+import java.util.UUID;
+
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
 import org.springframework.stereotype.Component;
@@ -7,12 +9,16 @@ import org.springframework.web.server.ResponseStatusException;
 
 import com.example.NutreAPP.models.Usuario;
 import com.example.NutreAPP.repositories.IUsuarioRepositorio;
+import com.example.NutreAPP.repositories.IVideoRepositorio;
 
-@Component 
+@Component
 public class UsuarioValidacion {
 
     @Autowired
     private IUsuarioRepositorio repositorio;
+
+    @Autowired
+    private IVideoRepositorio videoRepositorio;
 
     // validaciones de formato
 
@@ -41,7 +47,8 @@ public class UsuarioValidacion {
     //// 4. validar que la contraseña tenga minimo 8 caracteres
     public void validarContraseña(String contraseña) {
         if (contraseña.length() < 8) {
-            throw new ResponseStatusException(HttpStatus.BAD_REQUEST,"La contraeña debe ser mas grande de 8 caracteres");
+            throw new ResponseStatusException(HttpStatus.BAD_REQUEST,
+                    "La contraeña debe ser mas grande de 8 caracteres");
         }
     }
 
@@ -52,24 +59,26 @@ public class UsuarioValidacion {
     public void validarUsuarioNuevo(Usuario datos) {
         String correoEntregado = datos.getCorreo();
         this.repositorio.existsByCorreo(correoEntregado);
-        if(this.repositorio.existsByCorreo(correoEntregado)){
-             throw new ResponseStatusException(HttpStatus.BAD_REQUEST,"El correo entregado ya existe en BD");
+        if (this.repositorio.existsByCorreo(correoEntregado)) {
+            throw new ResponseStatusException(HttpStatus.BAD_REQUEST, "El correo entregado ya existe en BD");
         }
     }
 
-        // --- VALIDACIONES DE VIDEO ---
+    // --- VALIDACIONES DE VIDEO ---
 
     // V1. Título obligatorio y entre 5 y 120 caracteres.
     public void validarTituloVideo(String titulo) {
         if (titulo == null || titulo.trim().length() < 5 || titulo.trim().length() > 120) {
-            throw new ResponseStatusException(HttpStatus.BAD_REQUEST, "V1. El título debe tener entre 5 y 120 caracteres.");
+            throw new ResponseStatusException(HttpStatus.BAD_REQUEST,
+                    "V1. El título debe tener entre 5 y 120 caracteres.");
         }
     }
 
     // V2. La URL es obligatoria y debe empezar por "http://" o "https://".
     public void validarUrlVideo(String url) {
         if (url == null || (!url.startsWith("http://") && !url.startsWith("https://"))) {
-            throw new ResponseStatusException(HttpStatus.BAD_REQUEST, "V2. La URL es obligatoria y debe empezar por http:// o https://");
+            throw new ResponseStatusException(HttpStatus.BAD_REQUEST,
+                    "V2. La URL es obligatoria y debe empezar por http:// o https://");
         }
     }
 
@@ -80,10 +89,12 @@ public class UsuarioValidacion {
         }
     }
 
-    // V4. La descripción es opcional, pero si viene no puede superar 500 caracteres.
+    // V4. La descripción es opcional, pero si viene no puede superar 500
+    // caracteres.
     public void validarDescripcionVideo(String descripcion) {
         if (descripcion != null && descripcion.length() > 500) {
-            throw new ResponseStatusException(HttpStatus.BAD_REQUEST, "V4. La descripción no puede superar los 500 caracteres.");
+            throw new ResponseStatusException(HttpStatus.BAD_REQUEST,
+                    "V4. La descripción no puede superar los 500 caracteres.");
         }
     }
 
@@ -110,4 +121,20 @@ public class UsuarioValidacion {
         }
     }
 
+    // V4. El usuario y el video deben EXISTIR en la BD.
+    public void validarExistenciaUsuarioYVideo(UUID usuarioId, UUID videoId) {
+        if (!this.repositorio.existsById(usuarioId)) {
+            throw new ResponseStatusException(HttpStatus.NOT_FOUND, "V4. El usuario no existe en la BD.");
+        }
+        if (!this.videoRepositorio.existsById(videoId)) {
+            throw new ResponseStatusException(HttpStatus.NOT_FOUND, "V4. El video no existe en la BD.");
+        }
+    }
+
+    // V5. No pueden existir dos videos con la misma URL.
+    public void validarUrlUnica(String url) {
+        if (!this.videoRepositorio.existsByUrl(url)) {
+            throw new ResponseStatusException(HttpStatus.CONFLICT, "V5. Ya existe un video con esta URL.");
+        }
+    }
 }

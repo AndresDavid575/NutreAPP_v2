@@ -24,4 +24,6 @@ public interface IVideoRepositorio extends JpaRepository<Video, UUID> {
     Optional<Video> findByUrl(String url);
 
     List<Video> findByTituloAndCategoria(String titulo, Categoria categoria);
+
+    boolean existsByUrl(String url);
 }
