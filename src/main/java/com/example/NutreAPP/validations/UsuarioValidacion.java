@@ -57,4 +57,57 @@ public class UsuarioValidacion {
         }
     }
 
+        // --- VALIDACIONES DE VIDEO ---
+
+    // V1. Título obligatorio y entre 5 y 120 caracteres.
+    public void validarTituloVideo(String titulo) {
+        if (titulo == null || titulo.trim().length() < 5 || titulo.trim().length() > 120) {
+            throw new ResponseStatusException(HttpStatus.BAD_REQUEST, "V1. El título debe tener entre 5 y 120 caracteres.");
+        }
+    }
+
+    // V2. La URL es obligatoria y debe empezar por "http://" o "https://".
+    public void validarUrlVideo(String url) {
+        if (url == null || (!url.startsWith("http://") && !url.startsWith("https://"))) {
+            throw new ResponseStatusException(HttpStatus.BAD_REQUEST, "V2. La URL es obligatoria y debe empezar por http:// o https://");
+        }
+    }
+
+    // V3. La categoría es obligatoria (no puede llegar null).
+    public void validarCategoriaVideo(String categoria) {
+        if (categoria == null || categoria.isBlank()) {
+            throw new ResponseStatusException(HttpStatus.BAD_REQUEST, "V3. La categoría es obligatoria.");
+        }
+    }
+
+    // V4. La descripción es opcional, pero si viene no puede superar 500 caracteres.
+    public void validarDescripcionVideo(String descripcion) {
+        if (descripcion != null && descripcion.length() > 500) {
+            throw new ResponseStatusException(HttpStatus.BAD_REQUEST, "V4. La descripción no puede superar los 500 caracteres.");
+        }
+    }
+
+    // --- VALIDACIONES DE VISUALIZACION ---
+
+    // V1. La fecha de visualización es obligatoria.
+    public void validarFechaVisualizacion(java.time.LocalDate fecha) {
+        if (fecha == null) {
+            throw new ResponseStatusException(HttpStatus.BAD_REQUEST, "V1. La fecha de visualización es obligatoria.");
+        }
+    }
+
+    // V2. La fecha no puede ser futura.
+    public void validarFechaNoFutura(java.time.LocalDate fecha) {
+        if (fecha != null && fecha.isAfter(java.time.LocalDate.now())) {
+            throw new ResponseStatusException(HttpStatus.BAD_REQUEST, "V2. La fecha no puede ser futura.");
+        }
+    }
+
+    // V3. El campo completado es obligatorio.
+    public void validarCompletado(Boolean completado) {
+        if (completado == null) {
+            throw new ResponseStatusException(HttpStatus.BAD_REQUEST, "V3. El campo completado es obligatorio.");
+        }
+    }
+
 }

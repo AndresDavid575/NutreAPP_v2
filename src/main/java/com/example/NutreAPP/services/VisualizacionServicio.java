@@ -11,6 +11,8 @@ import org.springframework.web.server.ResponseStatusException;
 
 import com.example.NutreAPP.models.Video;
 import com.example.NutreAPP.models.Visualizacion;
+import com.example.NutreAPP.repositories.IUsuarioRepositorio;
+import com.example.NutreAPP.repositories.IVideoRepositorio;
 import com.example.NutreAPP.repositories.IVisualizacionRepositorio;
 
 @Service 
@@ -29,6 +31,12 @@ public class VisualizacionServicio {
 
     @Autowired 
     private IVisualizacionRepositorio repositorio;
+
+    @Autowired 
+    private IUsuarioRepositorio usuarioRepositorio;
+    @Autowired 
+    private IVideoRepositorio videoRepositorio;
+
     public Visualizacion guardar(Visualizacion datos){
        return   this.repositorio.save(datos);
 
